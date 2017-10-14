@@ -1,0 +1,27 @@
+version: '3'
+
+networks:
+  default:
+    external:
+      name: webapp
+
+services:
+  db:
+    environment:
+      POSTGRES_USER: clux
+      POSTGRES_DB: postgres
+    image: postgres:9.6
+    ports:
+      - "5432:5432"
+  web:
+    restart: on-failure
+    depends_on:
+      - db
+    build: .
+    environment:
+      POSTGRES_USER: clux
+      POSTGRES_DB: postgres
+      POSTGRES_DB_URL: db
+      POSTGRES_DB_PORT: 5432
+    ports:
+      - "8000:8000"
