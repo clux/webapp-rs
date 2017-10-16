@@ -1,12 +1,21 @@
 # Rust microservice setup with rocket and diesel
 Provided as a proof of concept.
 
-## Developing
-A musl builds takes some time, so for a quick iterations, it's easiest to just run debug builds against a static postgres container:
+## Setup
+Initial dependencies can be installed and verified using:
 
 ```sh
-sudo pacman -S postgresql-libs # need libpq locally for diesel
-cargo install diesel_cli --no-default-features --features postgres
+sudo pacman -S postgresql-libs # need libpq locally for dev builds and diesel_cli
+cargo install diesel_cli --no-default-features --features postgres # migration tool
+rustup override set nightly # for rocket
+```
+
+Replace `pacman` with the corresponding package manager on your distro.
+
+## Developing
+A musl build takes some time, so for a quick iterations, it's easiest to just run debug builds against a seeded, static postgres container:
+
+```sh
 source env.sh
 docker run --rm -d \
   -p "5432:5432" \
@@ -15,14 +24,21 @@ docker run --rm -d \
   -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
   -e POSTGRES_USER="$POSTGRES_USER" \
   -it postgres:9.6
+sleep 5 # wait for postgres to initialize
+diesel migration run # seed with tables in migrations dir
+cargo build
 ```
 
-and develop on a debug build in a separate shell
+then iterate with:
 
 ```sh
-source env.sh
-diesel migration run
 cargo run
+```
+
+and test against a running app using a second shell:
+
+```sh
+./test.sh
 ```
 
 ## Building
@@ -35,6 +51,8 @@ docker run \
   -v cargo-cache:/root/.cargo \
   -v "$PWD:/volume" -w /volume \
   --rm -it clux/muslrust cargo build --release
+chown $USER:$USER -R target
+strip target/x86_64-unknown-linux-musl/release/webapp
 docker-compose build
 ```
 

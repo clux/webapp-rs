@@ -29,3 +29,6 @@ version = "0.16.0"
 [dependencies.diesel_codegen]
 features = ["postgres"]
 version = "0.16.0"
+
+[profile.release]
+lto = true
