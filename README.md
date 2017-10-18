@@ -19,6 +19,7 @@ make test
 ```
 
 ## Production
+**CURRENTLY NOT WORKING** - needs a bugfix in [clux/muslrust#19](https://github.com/clux/muslrust/issues/19)
 
 ```sh
 make prod-build
