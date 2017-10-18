@@ -1,0 +1,17 @@
+[development]
+address = "localhost"
+port = 8000
+workers = 4
+log = "normal"
+
+[staging]
+address = "0.0.0.0"
+port = 8000
+workers = 4
+log = "normal"
+
+[production]
+address = "0.0.0.0"
+port = 8000
+workers = 4
+log = "critical"
