@@ -8,8 +8,9 @@ networks:
 services:
   db:
     environment:
-      POSTGRES_USER: clux
-      POSTGRES_DB: postgres
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
     image: postgres:9.6
     ports:
       - "5432:5432"
@@ -19,6 +20,6 @@ services:
       - db
     build: .
     environment:
-      DATABASE_URL: "postgres://clux:foobar@db/postgres"
+      DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}"
     ports:
       - "8000:8000"

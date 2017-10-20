@@ -1,27 +1,22 @@
 #!/bin/bash
 set -ex
 
-res=$(curl -X POST http://localhost:8000/posts -H "Content-Type: application/json" \
+res=$(curl -s -X POST http://localhost:8000/posts -H "Content-Type: application/json" \
   -d '{"title": "my life", "body": "memes"}')
 
 lastid="$(echo "${res}" | json id)"
 
 # can get it individually
-curl -X GET "http://localhost:8000/posts/${lastid}"
-echo
+curl -s -X GET "http://localhost:8000/posts/${lastid}"
 
 # post not published yet
-curl -X GET http://localhost:8000/posts | grep -v "${lastid}"
-echo
+curl -s -X GET http://localhost:8000/posts | grep -v "${lastid}"
 
 # publish
-curl -X PUT "http://localhost:8000/posts/${lastid}"
-echo
+curl -s -X PUT "http://localhost:8000/posts/${lastid}"
 
 # post now published
-curl -X GET http://localhost:8000/posts | grep "${lastid}"
-echo
+curl -s -X GET http://localhost:8000/posts | grep "${lastid}"
 
 # delete post
-curl -X DELETE "http://localhost:8000/posts/${lastid}"
-echo
+curl -s -X DELETE "http://localhost:8000/posts/${lastid}"
