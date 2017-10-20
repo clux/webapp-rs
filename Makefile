@@ -41,7 +41,7 @@ prod-build:
 		-v cargo-cache:/root/.cargo \
 		-v "$$PWD:/volume" \
 		--rm -it clux/muslrust cargo build --release
-	chown $$USER:$$USER -R target
+	sudo chown $$USER:$$USER -R target
 	strip target/x86_64-unknown-linux-musl/release/webapp
 	docker-compose build
 

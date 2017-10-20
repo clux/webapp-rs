@@ -32,3 +32,6 @@ version = "0.16.0"
 
 [profile.release]
 lto = true
+
+[patch.crates-io]
+pq-sys = { git = 'https://github.com/golddranks/pq-sys' }

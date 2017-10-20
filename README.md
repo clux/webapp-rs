@@ -19,7 +19,7 @@ make test
 ```
 
 ## Production
-**CURRENTLY NOT WORKING** - needs a bugfix in [clux/muslrust#19](https://github.com/clux/muslrust/issues/19)
+NB: this currently requires a patched `pq-sys` crate for muslrust build (see [clux/muslrust#19](https://github.com/clux/muslrust/issues/19))
 
 ```sh
 make prod-build
