@@ -1,5 +1,5 @@
 # Rust microservice setup with rocket and postgres diesel
-Provided as a proof of concept.
+All running from a [<7MB app container](./Dockerfile) along the postgres container.
 
 ## Developing
 Install dependencies, setup `rustup` env, then start a dev postgres with credentials:
