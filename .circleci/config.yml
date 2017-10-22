@@ -6,14 +6,10 @@ jobs:
     working_directory: /volume
     steps:
       - checkout
-      - run: echo $PWD
-      - run: ls
-      - run: ls /
-      - run: ls /volume
-      #- save_cache:
-      #    key: cargo.lock-{{ checksum "Cargo.lock" }}
-      #    paths:
-      #      - target
+      - save_cache:
+          key: cargo.lock-{{ checksum "Cargo.lock" }}
+          paths:
+            - target
       - run: cargo build --release
 
 #  test:
