@@ -6,7 +6,7 @@ jobs:
     working_directory: /volume
     steps:
       - checkout
-      - set: RUSTC_VERSION=$(rustc --version | awk '{print $2}' | cut -d"-" -f1)
+      - run: echo "export RUSTC_VERSION=$(rustc --version | awk '{print $2}' | cut -d'-' -f1)" >> $BASH_ENV
       - restore_cache:
           key: cargo.downloads-{{ .Environment.RUSTC_VERSION }}
       - restore_cache:
