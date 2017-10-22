@@ -6,9 +6,8 @@ jobs:
     working_directory: /volume
     steps:
       - checkout
-      - run: echo "export RUSTC_VERSION=$(rustc --version | awk '{print $2}' | cut -d'-' -f1)" >> $BASH_ENV
       - restore_cache:
-          key: cargo.downloads-{{ .Environment.RUSTC_VERSION }}
+          key: cargo.registry
       - restore_cache:
           key: cargo.lock-{{ checksum "Cargo.lock" }}
       - run: cargo build --release
@@ -17,7 +16,7 @@ jobs:
           paths:
             - target
       - save_cache:
-          key: cargo.downloads-{{ .Environment.RUSTC_VERSION }}
+          key: cargo.registry
           paths:
             - /root/.cargo
 
