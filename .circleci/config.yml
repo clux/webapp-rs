@@ -8,13 +8,13 @@ jobs:
       - checkout
       - restore_cache:
           key: cargo.registry
-      - restore_cache:
-          key: cargo.lock-{{ checksum "Cargo.lock" }}
+      #- restore_cache:
+      #    key: cargo.lock-{{ checksum "Cargo.lock" }}
       - run: cargo build --release
       - save_cache:
           key: cargo.lock-{{ checksum "Cargo.lock" }}
           paths:
-            - target
+            - /volume/target
       - save_cache:
           key: cargo.registry
           paths:
