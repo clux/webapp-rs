@@ -3,13 +3,13 @@ jobs:
   build:
     docker:
       - image: clux/muslrust:nightly
-    working_directory: ~/webapp-rs
+    working_directory: /volume
     steps:
+      - checkout
       - run: echo $PWD
       - run: ls
       - run: ls /
       - run: ls /volume
-      - run: docker ps -a
       #- save_cache:
       #    key: cargo.lock-{{ checksum "Cargo.lock" }}
       #    paths:
