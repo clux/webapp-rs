@@ -6,11 +6,26 @@ jobs:
     working_directory: /volume
     steps:
       - checkout
+      - set: RUSTC_VERSION=$(rustc --version | awk '{print $2}' | cut -d"-" -f1)
+      - restore_cache:
+          key: cargo.downloads-{{ .Environment.RUSTC_VERSION }}
+      - restore_cache:
+          key: cargo.lock-{{ checksum "Cargo.lock" }}
+      - run: cargo build --release
       - save_cache:
           key: cargo.lock-{{ checksum "Cargo.lock" }}
           paths:
             - target
-      - run: cargo build --release
+      - save_cache:
+          key: cargo.downloads-{{ .Environment.RUSTC_VERSION }}
+          paths:
+            - /root/.cargo
+
+
+#          name: install rustfmt #and clippy
+#          command: |
+#            if [ ! -x /cargo/bin/cargo-fmt ]; then cargo install rustfmt ; fi
+#            if [ ! -x /cargo/bin/cargo-clippy ]; then cargo install clippy ; fi
 
 #  test:
 #    docker:
