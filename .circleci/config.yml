@@ -5,10 +5,15 @@ jobs:
       - image: clux/muslrust:nightly
     working_directory: /volume
     steps:
-      - save_cache:
-          key: cargo.lock-{{ checksum "Cargo.lock" }}
-          paths:
-            - target
+      #- save_cache:
+      #    key: cargo.lock-{{ checksum "Cargo.lock" }}
+      #    paths:
+      #      - target
       - run:
           name: build musl release
           command: cargo build --release
+
+#  test:
+#    docker:
+#      - image: clux/muslrust:nightly
+#      - image: postgres:9.6
