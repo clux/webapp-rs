@@ -27,6 +27,9 @@ jobs:
           paths:
             - /root/.cargo
   build_image:
+    machine:
+      services:
+        - docker
     steps:
       - checkout
       - restore_cache:
