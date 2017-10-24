@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  compile:
     docker:
       - image: clux/muslrust:nightly
     working_directory: /volume
@@ -11,8 +11,6 @@ jobs:
       - restore_cache:
           key: target-{{ checksum "Cargo.lock" }}
       - run: cargo build --release
-      - run: du target
-      - run: du /volume/target
       - save_cache:
           key: target-{{ checksum "Cargo.lock" }}
           paths:
@@ -21,16 +19,21 @@ jobs:
           key: cargo.registry
           paths:
             - /root/.cargo
+  build:
+    steps:
+      - checkout
+      - restore_cache:
+          key: target-{{ checksum "Cargo.lock" }}
+      - docker build -t clux/webapp-rs .
+  test:
+    docker:
+      - image: clux/webapp-rs
+          environment:
+            DATABASE_URL: postgres://root@localhost/circle_test
+      - image: circleci/postgres:9-alpine-ram
+    working_directory: /volume
+    steps:
+      - checkout
+      - make test
 
-
-#          name: install rustfmt #and clippy
-#          command: |
-#            if [ ! -x /cargo/bin/cargo-fmt ]; then cargo install rustfmt ; fi
-#            if [ ! -x /cargo/bin/cargo-clippy ]; then cargo install clippy ; fi
-
-#  test:
-#    docker:
-#      - image: clux/muslrust:nightly
-#        environment:
-#          DATABASE_URL: postgres://root@localhost/circle_test
-#      - image: circleci/postgres:9-alpine-ram
+# TODO: clippy + rustfmt on merge
