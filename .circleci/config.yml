@@ -3,11 +3,11 @@ workflows:
   version: 2
   compile_build_and_test:
     jobs:
-      - compile
-      - build
-      - test
+      - compile_app
+      - build_image
+      - test_compose
 jobs:
-  compile:
+  compile_app:
     docker:
       - image: clux/muslrust:night
     working_directory: /volume
@@ -26,13 +26,13 @@ jobs:
           key: cargo.registry
           paths:
             - /root/.cargo
-  build:
+  build_image:
     steps:
       - checkout
       - restore_cache:
           key: target-{{ checksum "Cargo.lock" }}
       - docker build -t clux/webapp .
-  test:
+  test_compose:
     docker:
       - image: clux/webapp-rs
       - image: circleci/postgres:9-alpine-ram
