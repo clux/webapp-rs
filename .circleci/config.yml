@@ -1,4 +1,11 @@
 version: 2
+workflows:
+  version: 2
+  compile_build_and_test:
+    jobs:
+      - compile
+      - build
+      - test
 jobs:
   compile:
     docker:
@@ -36,13 +43,5 @@ jobs:
       - checkout
       - run: echo "TODO: diesel migration run"
       - run: make test
-
-workflows:
-  version: 2
-  compile_build_and_test:
-    jobs:
-      - compile
-      - build
-      - test
 
 # TODO: clippy + rustfmt on merge
