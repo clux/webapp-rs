@@ -9,7 +9,7 @@ workflows:
 jobs:
   compile_app:
     docker:
-      - image: clux/muslrust:night
+      - image: clux/muslrust:nightly
     working_directory: /volume
     steps:
       - checkout
