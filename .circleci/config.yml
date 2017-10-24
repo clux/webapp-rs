@@ -21,11 +21,13 @@ jobs:
       - restore_cache:
           key: target-{{ checksum "Cargo.lock" }}
       - run: cargo build --release
-      - run: sudo chown $USER:$USER target
       - save_cache:
           key: target-{{ checksum "Cargo.lock" }}
           paths:
             - target
+      - store_artifacts:
+          path: target/x86_64-unknown-linux-musl/release/webapp
+          destination: ~/webapp/target/x86_64-unknown-linux-musl/release/
       - save_cache:
           key: cargo.registry
           paths:
@@ -34,6 +36,7 @@ jobs:
     machine:
       services:
         - docker
+    working_directory: ~/webapp
     steps:
       - checkout
       - restore_cache:
