@@ -1,6 +1,7 @@
 version: 2
+
 jobs:
-  compile:
+  compile_app:
     docker:
       - image: clux/muslrust:nightly
     working_directory: /volume
@@ -19,13 +20,15 @@ jobs:
           key: cargo.registry
           paths:
             - /root/.cargo
-  build:
+
+  build_image:
     steps:
       - checkout
       - restore_cache:
           key: target-{{ checksum "Cargo.lock" }}
-      - docker build -t clux/webapp-rs .
-  test:
+      - docker build -t clux/webapp .
+
+  test_compose:
     docker:
       - image: clux/webapp-rs
           environment:
@@ -37,3 +40,15 @@ jobs:
       - make test
 
 # TODO: clippy + rustfmt on merge
+
+workflows:
+  version: 2
+  compile_build_and_test:
+    jobs:
+      - compile_app
+      - build_image:
+          requires:
+            - compile_app
+      - test_compose:
+          requires:
+            - build_image
