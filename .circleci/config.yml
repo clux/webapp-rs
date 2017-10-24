@@ -18,6 +18,7 @@ jobs:
       - restore_cache:
           key: target-{{ checksum "Cargo.lock" }}
       - run: cargo build --release
+      - run: sudo chown $USER:$USER target
       - save_cache:
           key: target-{{ checksum "Cargo.lock" }}
           paths:
