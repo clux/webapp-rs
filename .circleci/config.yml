@@ -37,11 +37,12 @@ jobs:
       - image: clux/webapp-rs
       - image: circleci/postgres:9-alpine-ram
     working_directory: /volume
-    environment:
-        DATABASE_URL: postgres://root@localhost/circle_test
     steps:
       - checkout
       - run: echo "TODO: diesel migration run"
       - run: make test
+
+#    environment:
+#        DATABASE_URL: postgres://root@localhost/circle_test
 
 # TODO: clippy + rustfmt on merge
