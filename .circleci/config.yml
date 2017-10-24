@@ -39,8 +39,6 @@ jobs:
     working_directory: ~/webapp
     steps:
       - checkout
-      - restore_cache:
-          key: target-{{ checksum "Cargo.lock" }}
       - run: docker build -t clux/webapp .
 #  test_compose:
 #    docker:
