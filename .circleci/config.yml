@@ -1,9 +1,8 @@
-version: 2.0
-
+version: 2
 jobs:
-  compile_app:
+  compile:
     docker:
-      - image: clux/muslrust:nightly
+      - image: clux/muslrust:night
     working_directory: /volume
     steps:
       - checkout
@@ -20,35 +19,30 @@ jobs:
           key: cargo.registry
           paths:
             - /root/.cargo
-
-  build_image:
+  build:
     steps:
       - checkout
       - restore_cache:
           key: target-{{ checksum "Cargo.lock" }}
       - docker build -t clux/webapp .
-
-  test_compose:
+  test:
     docker:
       - image: clux/webapp-rs
-          environment:
-            DATABASE_URL: postgres://root@localhost/circle_test
       - image: circleci/postgres:9-alpine-ram
     working_directory: /volume
+    environment:
+        DATABASE_URL: postgres://root@localhost/circle_test
     steps:
       - checkout
-      - make test
-
-# TODO: clippy + rustfmt on merge
+      - run: echo "TODO: diesel migration run"
+      - run: make test
 
 workflows:
   version: 2
   compile_build_and_test:
     jobs:
-      - compile_app
-      - build_image:
-          requires:
-            - compile_app
-      - test_compose:
-          requires:
-            - build_image
+      - compile
+      - build
+      - test
+
+# TODO: clippy + rustfmt on merge
