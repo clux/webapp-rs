@@ -5,6 +5,9 @@ workflows:
     jobs:
       - compile_app
       - build_image
+          requires:
+            - compile_app
+
 #      - test_compose
 jobs:
   compile_app:
@@ -35,7 +38,7 @@ jobs:
       - checkout
       - restore_cache:
           key: target-{{ checksum "Cargo.lock" }}
-      - docker build -t clux/webapp .
+      - run: docker build -t clux/webapp .
 #  test_compose:
 #    docker:
 #      - image: clux/webapp-rs
