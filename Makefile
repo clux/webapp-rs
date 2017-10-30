@@ -18,8 +18,7 @@ db: has_secrets	no_postgres
 		-e POSTGRES_USER="$$POSTGRES_USER" \
 		-it postgres:9.6
 	sleep 5 # wait for postgres to initialize
-	diesel migration run # seed with tables in migrations dir
-	diesel print-schema > src/schema.rs
+	make migration
 
 stop:
 	@docker ps -aq | xargs -r docker rm -f
@@ -35,7 +34,7 @@ run: has_secrets has_postgres
 test:
 	./test.sh
 
-prod-build:
+build:
 	@echo "Starting production docker build"
 	docker run \
 		-v cargo-cache:/root/.cargo \
@@ -43,9 +42,15 @@ prod-build:
 		--rm -it clux/muslrust cargo build --release
 	sudo chown $$USER:$$USER -R target
 	strip target/x86_64-unknown-linux-musl/release/webapp
-	docker-compose build
+	docker-compose build --no-cache
 
-prod-run: has_secrets
+up: has_secrets
 	@echo "Starting docker compose"
-	@docker network inspect webapp || docker network create webapp
 	docker-compose up
+
+migration: has_secrets
+	diesel migration run
+	diesel migration list
+	diesel print-schema > src/schema.rs
+
+.PHONY: migration up build test run setup stop db has_postgres has_secrets no_postgres

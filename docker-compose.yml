@@ -1,10 +1,5 @@
 version: '3'
 
-networks:
-  default:
-    external:
-      name: webapp
-
 services:
   db:
     environment:

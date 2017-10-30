@@ -22,16 +22,15 @@ make test
 NB: this currently requires a patched `pq-sys` crate for muslrust build (see [clux/muslrust#19](https://github.com/clux/muslrust/issues/19))
 
 ```sh
-make prod-build
+make build
 source env.sh
-make prod-run
+make up
 ```
 
-The first time you setup the compose you need to also:
+Then you can seed its database and test against it with:
 
 ```sh
 source env.sh
-diesel migration run
+make migration
+make test
 ```
-
-but after that `make test` will succeed.
