@@ -10,9 +10,12 @@ docker_login: &docker_login
 
 postgres_env: &postgres_env
   environment:
+    # The defined vars the postgres containers use
     - POSTGRES_USER: clux
     - POSTGRES_DB: postgres
     - POSTGRES_PASSWORD: foobar
+    # Hacky host ip for the diesel-cli container that is not using compose:
+    - POSTGRES_DB_URL: 0.0.0.0
 
 workflows:
   version: 2
@@ -81,11 +84,13 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      # debug
-      - run: docker images
       - run: make compose
       - run: make migrate
       - run: make test
+      - run:
+          name: Debug
+          when: on_fail
+          command: docker-compose logs
 
   docker_push:
     machine:
