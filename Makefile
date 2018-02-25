@@ -36,7 +36,11 @@ setup:
 test:
 	./test.sh
 
+up: has_secrets
+	docker-compose up -d
+
 compose: has_secrets
+	@echo "Slow-automatic compose and migrate on CI"
 	docker-compose up -d db
 	sleep 10
 	make migrate

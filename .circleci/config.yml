@@ -100,7 +100,6 @@ jobs:
       - attach_workspace:
           at: .
       - <<: *docker_login
-      - run: make build-docker
       - run: make tag-latest
       - run: make tag-semver
 

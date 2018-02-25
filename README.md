@@ -5,16 +5,16 @@ https://hub.docker.com/r/clux/webapp-rs/)
 [![docker image info](https://images.microbadger.com/badges/image/clux/webapp-rs.svg)](http://microbadger.com/images/clux/webapp-rs)
 [![docker tag](https://images.microbadger.com/badges/version/clux/webapp-rs.svg)](https://hub.docker.com/r/clux/webapp-rs/tags/)
 
-All running from a [<7MB app container](./Dockerfile) along the postgres container.
+A JSON API microservice with database backing all running from a [<7MB container](./Dockerfile).
 
-## Developing
+## Developing Easily
 Install dependencies, setup `rustup` env, then start a dev postgres with credentials:
 
 ```sh
 sudo pacman -S postgresql-libs # or distro equivalent
 make setup
 source env.sh
-make db
+make db # runs postgres in a container
 ```
 
 then run and test in parallel with:
@@ -24,7 +24,7 @@ make run
 make test
 ```
 
-Note that this is a JSON REST API only.
+This workflow does not require any docker builds, nor any local installation of postgres (just the client library to talk to the containerised version).
 
 ## Docker only
 You can develop and test production equivalents without rust, without local postgres, without postgres libs, and without diesel-cli locally:
@@ -34,9 +34,9 @@ This is the production equivalent flow:
 ```sh
 # Build the app with clux/muslrust
 make compile
-# Run the app with docker-compose
+# Run the app + db with docker-compose
 source env.sh
-make compose
+make up
 # Use clux/diesel-cli to run migrations
 make migrate
 # Verify
