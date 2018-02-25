@@ -39,6 +39,7 @@ jobs:
     docker:
       - image: clux/muslrust:nightly
     working_directory: /volume
+    # TODO: fix cargo caching here - currently isn't working
     steps:
       - checkout
       - restore_cache:
@@ -66,6 +67,7 @@ jobs:
     docker:
       - image: clux/muslrust:nightly
     working_directory: /volume
+    # TODO: clippy
     steps:
       - checkout
       - restore_cache:
@@ -102,5 +104,3 @@ jobs:
       - <<: *docker_login
       - run: make tag-latest
       - run: make tag-semver
-
-# TODO: clippy + rustfmt on merge
