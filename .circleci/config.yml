@@ -19,18 +19,10 @@ workflows:
   flow:
     jobs:
       - musl_build
-      - unit_test:
-#          filters:
-#            branches:
-#              ignore:
-#                - master
+      - unit_test
       - integration_test:
           requires:
             - musl_build
-#          filters:
-#            branches:
-#              ignore:
-#                - master
       - docker_push:
           requires:
             - musl_build
