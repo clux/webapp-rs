@@ -25,8 +25,8 @@ workflows:
 #              ignore:
 #                - master
       - integration_test:
-#          requires:
-#            - musl_build
+          requires:
+            - musl_build
 #          filters:
 #            branches:
 #              ignore:
