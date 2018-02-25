@@ -36,18 +36,25 @@ setup:
 test:
 	./test.sh
 
-up: has_secrets
-	docker-compose up -d
+
 
 compose: has_secrets
-	@echo "Slow-automatic compose and migrate on CI"
 	docker-compose up -d db
-	sleep 10
-	make migrate
+	@echo "Waiting for postgres"
+	@if hash psql 2> /dev/null; then \
+		until [[ $$RETRIES -ge 10 ]] || PGPASSWORD=$${POSTGRES_PASSWORD} psql -h $${POSTGRES_DB_URL} -U $$POSTGRES_USER -d $${POSTGRES_DB} -c "select 1" > /dev/null ; do \
+			echo "$$((RETRIES++))"; \
+			sleep 1; \
+		done \
+	else \
+	  sleep 10 ;\
+	fi
+	@make migrate
 	docker-compose up -d web
 	docker-compose logs web
 
 migrate:
+	@echo "Running migrations"
 	docker run --rm \
 		-v "$$PWD:/volume" \
 		-w /volume \
