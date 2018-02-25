@@ -84,10 +84,12 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: make compose
+      - run: docker-compose up -d db
+      - run: sleep 10
       - run: make migrate
-      - run: make test
+      - run: docker-compose up -d web
       - run: sleep 2
+      - run: make test
       - run:
           name: Debug
           when: on_fail
