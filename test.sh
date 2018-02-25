@@ -4,7 +4,7 @@ set -ex
 res=$(curl -s -X POST http://0.0.0.0:8000/posts -H "Content-Type: application/json" \
   -d '{"title": "my life", "body": "memes"}')
 
-lastid="$(echo "${res}" | json id)"
+lastid="$(echo "${res}" | jq ".id")"
 
 # can get it individually
 curl -s -X GET "http://0.0.0.0:8000/posts/${lastid}"

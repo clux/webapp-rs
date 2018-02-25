@@ -84,11 +84,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: docker-compose up -d db
-      - run: sleep 10
-      - run: make migrate
-      - run: docker-compose up -d web
-      - run: sleep 2
+      - run: make compose
       - run: make test
       - run:
           name: Debug

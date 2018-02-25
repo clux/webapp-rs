@@ -37,8 +37,11 @@ test:
 	./test.sh
 
 compose: has_secrets
-	docker-compose up -d
+	docker-compose up -d db
 	sleep 10
+	make migrate
+	docker-compose up -d web
+	docker-compose logs web
 
 migrate:
 	docker run --rm \
