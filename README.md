@@ -1,4 +1,10 @@
 # Rust microservice setup with rocket and postgres diesel
+[![CircleCI](https://circleci.com/gh/clux/webapp-rs/tree/master.svg?style=shield)](https://circleci.com/gh/clux/webapp-rs/tree/master)
+[![docker pulls](https://img.shields.io/docker/pulls/clux/webapp-rs.svg)](
+https://hub.docker.com/r/clux/webapp-rs/)
+[![docker image info](https://images.microbadger.com/badges/image/clux/webapp-rs.svg)](http://microbadger.com/images/clux/webapp-rs)
+[![docker tag](https://images.microbadger.com/badges/version/clux/webapp-rs.svg)](https://hub.docker.com/r/clux/webapp-rs/tags/)
+
 All running from a [<7MB app container](./Dockerfile) along the postgres container.
 
 ## Developing

@@ -41,7 +41,7 @@ workflows:
 jobs:
   musl_build:
     docker:
-      - image: clux/muslrust:stable
+      - image: clux/muslrust:nightly
     working_directory: /volume
     steps:
       - checkout
@@ -68,7 +68,7 @@ jobs:
 
   unit_test:
     docker:
-      - image: clux/muslrust:stable
+      - image: clux/muslrust:nightly
     working_directory: /volume
     steps:
       - checkout
