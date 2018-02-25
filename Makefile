@@ -69,14 +69,16 @@ compile:
 	strip target/x86_64-unknown-linux-musl/release/webapp
 	mv target/x86_64-unknown-linux-musl/release/webapp .
 
-build: compile
+build:
+	@echo "Reusing built binary in current directory from make compile"
+	@ls -lah ./webapp
 	docker build -t $(REPO)/$(NAME):$(VERSION) .
 
-tag-latest:
+tag-latest: build
 	docker tag $(REPO)/$(NAME):$(VERSION) $(REPO)/$(NAME):latest
 	docker push $(REPO)/$(NAME):latest
 
-tag-semver:
+tag-semver: build
 	if curl -sSL https://registry.hub.docker.com/v1/repositories/$(REPO)/$(NAME)/tags | jq -r ".[].name" | grep -q $(SEMVER_VERSION); then \
 		echo "Tag $(SEMVER_VERSION) already exists" && exit 1 ;\
 	fi
