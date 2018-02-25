@@ -43,13 +43,11 @@ make migrate
 make test
 ```
 
-If you think about it properly for kubernetes, these steps work out nicely:
+The migration step runs `diesel migration run` in a container. This can be done as part of lifecycle hooks on kubernetes. See the [diesel-cli](https://github.com/clux/diesel-cli) container for more info.
 
-The migration step can be an init step before the app container starts, but after the postgres container has initialised. Explicitly it's only doing `diesel migration run` in the [diesel-cli](https://github.com/clux/diesel-cli) container. This maps perfectly onto [Init Containers on Kubernetes](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
-
-Such an init step would still have to wait for postgres to initialize, either via a sleep or a `psql` "select 1" attempt. See `make compose` for more info.
-
-The compile step could be baked into a multistep docker build to be able to simple `make compose` instead of `make compile` first. However, doing efficient caching of slow rust builds for this is complicated. Even if you were using compose, you wouldn't use a compose file with a `build` key in production anyway. CI would build and push your production image after testing, and the orchestrator would compose.
+The compile step could be baked into a multistep docker build to be able to simply run `make compose` instead of `make compile` first. However, doing efficient caching of slow rust builds for this is complicated. Even if you were using compose, you wouldn't use a compose file with a `build` key in production anyway. CI would build and push your production image after testing, and the orchestrator would compose.
 
 ## Caveats
 **NB:** Static linkage build used in docker build currently requires a patched `pq-sys` crate for muslrust build (see [clux/muslrust#19](https://github.com/clux/muslrust/issues/19)).
+
+**NB:** With `docker-compose` our migration would have to wait for postgres to initialize, either via a sleep or a `psql` "select 1" attempt. See `make compose` for more info.
