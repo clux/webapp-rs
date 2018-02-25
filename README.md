@@ -21,15 +21,19 @@ make test
 Note that this is a JSON REST API only.
 
 ## Docker only
-You can develop and test production equivalents without rust, and without local dependencies outside a few docker images and evars.
+You can develop and test production equivalents without rust, without local postgres, without postgres libs, and without diesel-cli locally:
 
-The general flow is:
+This is the production equivalent flow:
 
 ```sh
+# Build the app with clux/muslrust
 make compile
+# Run the app with docker-compose
 source env.sh
 make compose
+# Use clux/diesel-cli to run migrations
 make migrate
+# Verify
 make test
 ```
 
