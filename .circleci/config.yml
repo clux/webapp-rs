@@ -1,18 +1,47 @@
 version: 2
+
+docker_login: &docker_login
+  run:
+    name: authentication
+    command: |
+      docker --version
+      docker-compose --version
+      docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
+
+postgres_env: &postgres_env
+  environment:
+    - POSTGRES_USER: clux
+    - POSTGRES_DB: postgres
+    - POSTGRES_PASSWORD: foobar
+
 workflows:
   version: 2
-  compile_build_and_test:
+  flow:
     jobs:
-      - compile_app
-      - build_image:
+      - musl_build
+      - unit_test:
+          filters:
+            branches:
+              ignore:
+                - master
+      - integration_test:
           requires:
-            - compile_app
-
-#      - test_compose
+            - musl_build
+          filters:
+            branches:
+              ignore:
+                - master
+      - docker_push:
+          requires:
+            - musl_build
+          filters:
+            branches:
+              only:
+                - master
 jobs:
-  compile_app:
+  musl_build:
     docker:
-      - image: clux/muslrust:nightly
+      - image: clux/muslrust:stable
     working_directory: /volume
     steps:
       - checkout
@@ -27,30 +56,55 @@ jobs:
             - target
       - store_artifacts:
           path: target/x86_64-unknown-linux-musl/release/webapp
-          destination: ~/webapp/target/x86_64-unknown-linux-musl/release/
+          destination: webapp
       - save_cache:
           key: cargo.registry
           paths:
             - /root/.cargo
-  build_image:
-    machine:
-      services:
-        - docker
-    working_directory: ~/webapp
+      - persist_to_workspace:
+          root: target/x86_64-unknown-linux-musl/release/
+          paths:
+            - webapp
+
+  unit_test:
+    docker:
+      - image: clux/muslrust:stable
+    working_directory: /volume
     steps:
       - checkout
-      - run: docker build -t clux/webapp .
-#  test_compose:
-#    docker:
-#      - image: clux/webapp-rs
-#      - image: circleci/postgres:9-alpine-ram
-#    working_directory: /volume
-#    steps:
-#      - checkout
-#      - run: echo "TODO: diesel migration run"
-#      - run: make test
+      - restore_cache:
+          key: cargo.registry
+      - restore_cache:
+          key: target-{{ checksum "Cargo.lock" }}
+      - run: cargo test
+      - run: cargo doc --no-deps
 
-#    environment:
-#        DATABASE_URL: postgres://root@localhost/circle_test
+  integration_test:
+    machine:
+      enabled: true
+      docker_layer_caching: true
+    <<: *postgres_env
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      # debug
+      - run: docker images
+      - run: make compose
+      - run: make migrate
+      - run: make test
+
+  docker_push:
+    machine:
+      enabled: true
+      docker_layer_caching: true
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - <<: *docker_login
+      - run: make build-docker
+      - run: make tag-latest
+      - run: make tag-semver
 
 # TODO: clippy + rustfmt on merge

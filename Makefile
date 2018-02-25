@@ -1,3 +1,7 @@
+NAME=webapp-rs
+VERSION=$(shell git rev-parse HEAD)
+SEMVER_VERSION=$(shell grep version Cargo.toml | awk -F"\"" '{print $$2}' | head -n 1)
+REPO=clux
 SHELL := /bin/bash
 
 has_secrets:
@@ -18,8 +22,8 @@ db: has_secrets	no_postgres
 		-e POSTGRES_USER="$$POSTGRES_USER" \
 		-it postgres:9.6
 	sleep 5 # wait for postgres to initialize
-	diesel migration run # seed with tables in migrations dir
-	diesel print-schema > src/schema.rs
+	#diesel migration run # seed with tables in migrations dir
+	#diesel print-schema > src/schema.rs
 
 stop:
 	@docker ps -aq | xargs -r docker rm -f
@@ -27,25 +31,47 @@ stop:
 
 setup:
 	cargo install diesel_cli --no-default-features --features postgres
-	rustup override set nightly
-
-run: has_secrets has_postgres
-	cargo run
+	rustup override set $$(cat .rustup)
 
 test:
 	./test.sh
 
-prod-build:
-	@echo "Starting production docker build"
-	docker run \
-		-v cargo-cache:/root/.cargo \
+compose: has_secrets
+	docker-compose up -d
+	sleep 10
+
+migrate:
+	docker run --rm \
 		-v "$$PWD:/volume" \
-		--rm -it clux/muslrust cargo build --release
+		-w /volume \
+		--net=host \
+		-e DATABASE_URL="$${DATABASE_URL}" \
+		-it clux/diesel-cli diesel migration run
+
+run: has_secrets has_postgres
+	cargo run
+
+compile:
+	docker run --rm \
+		-v cargo-cache:/root/.cargo \
+		-v $$PWD:/volume \
+		-w /volume \
+		-it clux/muslrust \
+		cargo build --release
 	sudo chown $$USER:$$USER -R target
 	strip target/x86_64-unknown-linux-musl/release/webapp
-	docker-compose build
+	mv target/x86_64-unknown-linux-musl/release/webapp .
 
-prod-run: has_secrets
-	@echo "Starting docker compose"
-	@docker network inspect webapp || docker network create webapp
-	docker-compose up
+build: compile
+	docker build -t $(REPO)/$(NAME):$(VERSION) .
+
+tag-latest:
+	docker tag $(REPO)/$(NAME):$(VERSION) $(REPO)/$(NAME):latest
+	docker push $(REPO)/$(NAME):latest
+
+tag-semver:
+	if curl -sSL https://registry.hub.docker.com/v1/repositories/$(REPO)/$(NAME)/tags | jq -r ".[].name" | grep -q $(SEMVER_VERSION); then \
+		echo "Tag $(SEMVER_VERSION) already exists" && exit 1 ;\
+	fi
+	docker tag $(REPO)/$(NAME):$(VERSION) $(REPO)/$(NAME):$(SEMVER_VERSION)
+	docker push $(REPO)/$(NAME):$(SEMVER_VERSION)

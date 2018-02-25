@@ -2,3 +2,4 @@
 **/*.rs.bk
 /target/
 **/*.rs.bk
+webapp
