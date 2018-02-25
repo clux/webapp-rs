@@ -87,6 +87,7 @@ jobs:
       - run: make compose
       - run: make migrate
       - run: make test
+      - run: sleep 2
       - run:
           name: Debug
           when: on_fail
