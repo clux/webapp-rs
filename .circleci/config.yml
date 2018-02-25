@@ -26,6 +26,7 @@ workflows:
       - docker_push:
           requires:
             - musl_build
+            - integration_test
           filters:
             branches:
               only:
