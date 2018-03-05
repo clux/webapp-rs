@@ -70,7 +70,7 @@ compile:
 		-v cargo-cache:/root/.cargo \
 		-v $$PWD:/volume \
 		-w /volume \
-		-it clux/muslrust \
+		-it clux/muslrust:nightly \
 		cargo build --release
 	sudo chown $$USER:$$USER -R target
 	strip target/x86_64-unknown-linux-musl/release/webapp

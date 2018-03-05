@@ -41,7 +41,6 @@ impl<'a, 'r> FromRequest<'a, 'r> for DbConn {
 
 /// Initializes a database pool via r2d2
 pub fn init(database_url: &str) -> Pool {
-    let config = r2d2::Config::default();
     let manager = ConnectionManager::<DbType>::new(database_url);
-    r2d2::Pool::new(config, manager).expect("db pool")
+    r2d2::Pool::new(manager).expect("db pool")
 }

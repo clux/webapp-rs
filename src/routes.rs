@@ -37,8 +37,8 @@ pub fn update_post(postid: i32, conn: DbConn) -> QueryResult<Json<Post>> {
 
 #[post("/posts", data="<newpost>")]
 pub fn create_post(newpost: Json<NewPost>, conn: DbConn) -> QueryResult<Json<Post>> {
-    diesel::insert(&newpost.0)
-        .into(posts::table)
+    diesel::insert_into(posts::table)
+        .values(&newpost.into_inner())
         .get_result(&*conn)
         .map(|x| Json(x))
 }
