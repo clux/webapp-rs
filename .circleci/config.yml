@@ -37,25 +37,25 @@ workflows:
 jobs:
   musl_build:
     docker:
-      - image: clux/muslrust:nightly
+      - image: clux/muslrust:stable
     working_directory: /volume
-    # TODO: fix cargo caching here - currently isn't working
     steps:
       - checkout
       - restore_cache:
-          key: cargo.registry
+          keys:
+          - cargo.registry-{{ checksum "Cargo.lock" }}
+          - cargo.registry-
       - restore_cache:
-          key: target-{{ checksum "Cargo.lock" }}
+          keys:
+          - target-{{ checksum "Cargo.lock" }}
+          - target-
       - run: cargo build --release
       - save_cache:
           key: target-{{ checksum "Cargo.lock" }}
           paths:
             - target
-      - store_artifacts:
-          path: target/x86_64-unknown-linux-musl/release/webapp
-          destination: webapp
       - save_cache:
-          key: cargo.registry
+          key: cargo.registry-{{ checksum "Cargo.lock" }}
           paths:
             - /root/.cargo
       - persist_to_workspace:
