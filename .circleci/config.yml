@@ -37,7 +37,7 @@ workflows:
 jobs:
   musl_build:
     docker:
-      - image: clux/muslrust:nightly-2018-10-10
+      - image: clux/muslrust:nightly
     working_directory: /volume
     steps:
       - checkout
