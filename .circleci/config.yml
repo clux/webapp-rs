@@ -43,19 +43,17 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - cargo.registry-{{ checksum "Cargo.lock" }}
-          - cargo.registry-
+          - cargo.registry-{{ .Environment.CACHE_VERSION }}
       - restore_cache:
           keys:
-          - target-{{ checksum "Cargo.lock" }}
-          - target-
+          - target-{{ .Environment.CACHE_VERSION }}
       - run: cargo build --release
       - save_cache:
-          key: target-{{ checksum "Cargo.lock" }}
+          key: target-{{ .Environment.CACHE_VERSION }}
           paths:
             - target
       - save_cache:
-          key: cargo.registry-{{ checksum "Cargo.lock" }}
+          key: cargo.registry-{{ .Environment.CACHE_VERSION }}
           paths:
             - /root/.cargo
       - persist_to_workspace:
@@ -73,7 +71,7 @@ jobs:
       - restore_cache:
           key: cargo.registry
       - restore_cache:
-          key: target-{{ checksum "Cargo.lock" }}
+          key: target-{{ .Environment.CACHE_VERSION }}
       - run: cargo test
       - run: cargo doc --no-deps
 

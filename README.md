@@ -48,8 +48,6 @@ Port to your templated wall of yaml of choice if you know what you are doing.
 Note that the migration step can be done as part of lifecycle hooks on kubernetes. See the [diesel-cli](https://github.com/clux/diesel-cli) container for more info.
 
 ## Caveats
-**NB:** Static linkage build used in docker build currently requires a patched `pq-sys` crate for muslrust build (see [clux/muslrust#19](https://github.com/clux/muslrust/issues/19)).
-
 **NB:** With `docker-compose` our migration would have to wait for postgres to initialize, either via a sleep or a `psql` "select 1" attempt. See `make compose` for more info.
 
-**NB:** The compile step is required before any build step, so `docker-compose up` would fail without it. It's possible to fix this by using a multistep docker build for the app, but it's not really necessary: If you are using compose in production, you would use the `image` key over the `build` key anywa.
+**NB:** The compile step is required before any build step, so `docker-compose up` would fail without it. It's possible to fix this by using a multistep docker build for the app, but it makes local build caching harder.
