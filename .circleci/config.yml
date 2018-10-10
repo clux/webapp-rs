@@ -43,17 +43,17 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - cargo.registry-{{ .Environment.CACHE_VERSION }}
+          - cargo.registry.release-{{ .Environment.CACHE_VERSION }}
       - restore_cache:
           keys:
-          - target-{{ .Environment.CACHE_VERSION }}
+          - target.release-{{ .Environment.CACHE_VERSION }}
       - run: cargo build --release
       - save_cache:
-          key: target-{{ .Environment.CACHE_VERSION }}
+          key: target.release-{{ .Environment.CACHE_VERSION }}
           paths:
             - target
       - save_cache:
-          key: cargo.registry-{{ .Environment.CACHE_VERSION }}
+          key: cargo.registry.release-{{ .Environment.CACHE_VERSION }}
           paths:
             - /root/.cargo
       - persist_to_workspace:
@@ -69,11 +69,21 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: cargo.registry
+          keys:
+          - cargo.registry.debug-{{ .Environment.CACHE_VERSION }}
       - restore_cache:
-          key: target-{{ .Environment.CACHE_VERSION }}
+          keys:
+          - target.debug-{{ .Environment.CACHE_VERSION }}
       - run: cargo test
       - run: cargo doc --no-deps
+      - save_cache:
+          key: target.debug-{{ .Environment.CACHE_VERSION }}
+          paths:
+            - target
+      - save_cache:
+          key: cargo.registry.debug-{{ .Environment.CACHE_VERSION }}
+          paths:
+            - /root/.cargo
 
   integration_test:
     machine:
