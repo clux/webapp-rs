@@ -42,6 +42,11 @@ make compose
 make test
 ```
 
+## CI
+Runs unit tests, musl build, intergration tests with docker compose and pushes to docker hub, all in <2 minutes (using a cache of rust target + registy directories).
+
+![Continuous Integration layout and timing](./ci-speed.png)
+
 ## Using Kubernetes
 Port to your templated wall of yaml of choice if you know what you are doing.
 
