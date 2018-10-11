@@ -5,6 +5,9 @@ extern crate rocket_contrib;
 
 #[macro_use]
 extern crate diesel;
+#[macro_use]
+extern crate diesel_migrations;
+embed_migrations!("./migrations/");
 
 extern crate serde;
 extern crate serde_json;
@@ -25,8 +28,10 @@ use self::routes::*;
 
 fn main() {
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let p = pool::init(&database_url);
+    embedded_migrations::run(&*p.clone().get().unwrap());
     rocket::ignite()
-        .manage(pool::init(&database_url))
+        .manage(p)
         .mount("/", routes![get_posts, get_post, create_post, delete_post, update_post])
         .launch();
 }

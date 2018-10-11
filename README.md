@@ -50,8 +50,6 @@ Runs unit tests, musl build, intergration tests with docker compose and pushes t
 ## Using Kubernetes
 Port to your templated wall of yaml of choice if you know what you are doing.
 
-Note that the migration step can be done as part of lifecycle hooks on kubernetes. See the [diesel-cli](https://github.com/clux/diesel-cli) container for more info.
-
 ## Caveats
 **NB:** With `docker-compose` our migration would have to wait for postgres to initialize, either via a sleep or a `psql` "select 1" attempt. See `make compose` for more info.
 

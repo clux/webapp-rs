@@ -36,8 +36,6 @@ setup:
 test:
 	./test.sh
 
-
-
 compose: has_secrets
 	docker-compose up -d db
 	@echo "Waiting for postgres"
@@ -49,18 +47,8 @@ compose: has_secrets
 	else \
 	  sleep 10 ;\
 	fi
-	@make migrate
 	docker-compose up -d web
 	docker-compose logs web
-
-migrate:
-	@echo "Running migrations"
-	docker run --rm \
-		-v "$$PWD:/volume" \
-		-w /volume \
-		--net=host \
-		-e DATABASE_URL="postgres://$${POSTGRES_USER}:$${POSTGRES_PASSWORD}@$${POSTGRES_DB_URL}/$${POSTGRES_DB}" \
-		-it clux/diesel-cli diesel migration run
 
 run: has_secrets has_postgres
 	cargo run
