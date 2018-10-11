@@ -21,9 +21,6 @@ db: has_secrets	no_postgres
 		-e POSTGRES_PASSWORD="$$POSTGRES_PASSWORD" \
 		-e POSTGRES_USER="$$POSTGRES_USER" \
 		-it postgres:9.6
-	sleep 5 # wait for postgres to initialize
-	diesel migration run # seed with tables in migrations dir
-	diesel print-schema > src/schema.rs
 
 stop:
 	@docker ps -aq | xargs -r docker rm -f
