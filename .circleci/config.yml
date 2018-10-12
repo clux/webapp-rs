@@ -8,11 +8,6 @@ docker_login: &docker_login
       docker-compose --version
       docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
 
-cache_env: &cache_env
-  environment:
-    # bump this when we bump dependencies or nightly version
-    CACHE_VERSION: 12
-
 postgres_env: &postgres_env
   environment:
     # The defined vars the postgres containers use
@@ -20,9 +15,6 @@ postgres_env: &postgres_env
     - POSTGRES_DB: postgres
     - POSTGRES_PASSWORD: foobar
     - POSTGRES_DB_URL: 0.0.0.0
-    # local helpers
-    - DATABASE_URL: "postgres://clux:foobar@0.0.0.0/postgres"
-    - ROCKET_ADDRESS: 0.0.0.0
 
 workflows:
   version: 2
@@ -46,9 +38,9 @@ jobs:
     docker:
       - image: clux/muslrust:nightly
     working_directory: /volume
-    <<: *cache_env
     steps:
       - checkout
+      - run: echo 'export CACHE_VERSION="12' >> $BASH_ENV
       - restore_cache:
           keys:
           - cargo.registry.release-{{ .Environment.CACHE_VERSION }}
@@ -73,9 +65,9 @@ jobs:
     docker:
       - image: clux/muslrust:nightly
     working_directory: /volume
-    <<: *cache_env
     steps:
       - checkout
+      - run: echo 'export CACHE_VERSION="12' >> $BASH_ENV
       - restore_cache:
           keys:
           - cargo.registry.debug-{{ .Environment.CACHE_VERSION }}
