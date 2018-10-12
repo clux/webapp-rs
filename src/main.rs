@@ -33,6 +33,6 @@ fn main() {
       .expect("Could run migrations");
     rocket::ignite()
         .manage(p)
-        .mount("/", routes![get_posts, get_post, create_post, delete_post, update_post])
+        .mount("/", routes![health, get_posts, get_post, create_post, delete_post, update_post])
         .launch();
 }

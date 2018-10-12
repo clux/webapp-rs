@@ -49,3 +49,8 @@ pub fn delete_post(postid: i32, conn: DbConn) -> QueryResult<Json<usize>> {
         .execute(&*conn)
         .map(|x| Json(x))
 }
+
+#[get("/health")]
+pub fn health() -> Json<()> {
+    Json(())
+}
