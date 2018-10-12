@@ -8,6 +8,11 @@ docker_login: &docker_login
       docker-compose --version
       docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
 
+cache_env: &cache_env
+  environment:
+    # bump this when we bump dependencies or nightly version
+    CACHE_VERSION: 12
+
 postgres_env: &postgres_env
   environment:
     # The defined vars the postgres containers use
@@ -41,6 +46,7 @@ jobs:
     docker:
       - image: clux/muslrust:nightly
     working_directory: /volume
+    <<: *cache_env
     steps:
       - checkout
       - restore_cache:
@@ -67,7 +73,7 @@ jobs:
     docker:
       - image: clux/muslrust:nightly
     working_directory: /volume
-    # TODO: clippy
+    <<: *cache_env
     steps:
       - checkout
       - restore_cache:
