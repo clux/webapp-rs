@@ -36,7 +36,7 @@ test:
 compose: has_secrets
 	docker-compose up -d db
 	@echo "Waiting for postgres"
-	@if hash psql 2> /dev/null; then \
+	if hash psql 2> /dev/null; then \
 		until [[ $$RETRIES -ge 10 ]] || PGPASSWORD=$${POSTGRES_PASSWORD} psql -h $${POSTGRES_DB_URL} -U $$POSTGRES_USER -d $${POSTGRES_DB} -c "select 1" > /dev/null ; do \
 			echo "$$((RETRIES++))"; \
 			sleep 1; \

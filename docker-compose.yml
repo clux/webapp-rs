@@ -15,6 +15,7 @@ services:
       - db
     build: .
     environment:
+      ROCKET_ENV: development
       DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}"
     ports:
       - "8000:8000"

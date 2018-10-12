@@ -14,6 +14,10 @@ postgres_env: &postgres_env
     - POSTGRES_USER: clux
     - POSTGRES_DB: postgres
     - POSTGRES_PASSWORD: foobar
+    - POSTGRES_DB_URL: 0.0.0.0
+    # local helpers
+    - DATABASE_URL: "postgres://clux:foobar@0.0.0.0/postgres"
+    - ROCKET_ADDRESS: 0.0.0.0
 
 workflows:
   version: 2
